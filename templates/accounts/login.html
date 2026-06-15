@@ -1,0 +1,35 @@
+{% extends "accounts/auth_base.html" %}
+
+{% block title %}Login — PostFlow{% endblock %}
+
+{% block auth_card %}
+<h1 class="page-title mb-2">Entrar</h1>
+<p class="text-muted mb-4">Acesse sua conta PostFlow</p>
+
+{% if form.non_field_errors %}
+<div class="alert alert-danger mb-3" role="alert">
+  {{ form.non_field_errors|join:", " }}
+</div>
+{% endif %}
+
+<form method="post" novalidate>
+  {% csrf_token %}
+  {% for field in form %}
+  <div class="field mb-3">
+    <label class="label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+    {{ field }}
+    {% if field.errors %}
+    <div class="text-danger small mt-1">{{ field.errors|join:", " }}</div>
+    {% endif %}
+  </div>
+  {% endfor %}
+  <div class="d-flex justify-content-end mb-3">
+    <a href="{% url 'accounts:password_reset' %}" class="text-accent small">Esqueceu a senha?</a>
+  </div>
+  <button type="submit" class="btn btn-primary w-100">Entrar</button>
+</form>
+{% endblock %}
+
+{% block auth_footer %}
+Não tem conta? <a href="{% url 'accounts:signup' %}" class="text-accent">Cadastre-se</a>
+{% endblock %}

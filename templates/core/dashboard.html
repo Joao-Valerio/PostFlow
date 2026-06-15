@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard — PostFlow{% endblock %}
+
+{% block content %}
+<div class="page-header animate-in">
+  <div>
+    <h1 class="page-title">Dashboard</h1>
+    <p class="page-subtitle">Visão geral das suas publicações agendadas</p>
+  </div>
+  <a href="{% url 'scheduler:post_create' %}" class="btn btn-primary">Novo post</a>
+</div>
+
+<div class="stats-grid animate-in animate-in-delay-1">
+  <div class="card stat-card">
+    <p class="stat-label">Total de agendamentos</p>
+    <p class="stat-value tabular">{{ stats.total }}</p>
+  </div>
+  <div class="card stat-card">
+    <p class="stat-label">Agendados</p>
+    <p class="stat-value tabular text-accent">{{ stats.scheduled }}</p>
+  </div>
+  <div class="card stat-card">
+    <p class="stat-label">Publicados</p>
+    <p class="stat-value tabular">{{ stats.published }}</p>
+  </div>
+  <div class="card stat-card">
+    <p class="stat-label">Falhas</p>
+    <p class="stat-value tabular">{{ stats.failed }}</p>
+  </div>
+</div>
+
+<div class="grid-2 animate-in animate-in-delay-2 mb-4">
+  <div class="card p-4">
+    <h2 class="h6 mb-3">Volume de agendamentos</h2>
+    <canvas id="posts-chart" height="200" aria-label="Gráfico de volume de agendamentos"></canvas>
+  </div>
+  <div class="quick-actions">
+    <a href="{% url 'scheduler:post_create' %}" class="quick-action card text-decoration-none">
+      <span>Criar post</span>
+    </a>
+    <a href="{% url 'scheduler:calendar' %}" class="quick-action card text-decoration-none">
+      <span>Ver calendário</span>
+    </a>
+    <a href="{% url 'integrations:account_list' %}" class="quick-action card text-decoration-none">
+      <span>Conectar redes</span>
+    </a>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+  (function () {
+    const labels = {{ chart_labels|safe }};
+    const data = {{ chart_data|safe }};
+    const canvas = document.getElementById('posts-chart');
+    if (!canvas || !window.Chart) return;
+
+    new Chart(canvas, {
+      type: 'bar',
+      data: {
+        labels: labels.length ? labels : ['Sem dados'],
+        datasets: [{
+          label: 'Agendamentos',
+          data: data.length ? data : [0],
+          backgroundColor: 'oklch(78% 0.14 155 / 0.35)',
+          borderColor: 'oklch(78% 0.14 155)',
+          borderWidth: 1,
+          borderRadius: 8,
+        }],
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { color: '#81868F' }, grid: { color: 'rgba(40,46,56,0.5)' } },
+          y: { beginAtZero: true, ticks: { color: '#81868F', precision: 0 }, grid: { color: 'rgba(40,46,56,0.5)' } },
+        },
+      },
+    });
+  })();
+</script>
+{% endblock %}

@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+
+
+{% block title %}Posts — PostFlow{% endblock %}
+
+
+
+{% block content %}
+
+<div class="page-header">
+
+  <div>
+
+    <h1 class="page-title">Posts</h1>
+
+    <p class="page-subtitle">Gerencie seus conteúdos</p>
+
+  </div>
+
+  <a href="{% url 'scheduler:post_create' %}" class="btn btn-primary">Novo post</a>
+
+</div>
+
+
+
+{% if posts %}
+
+<div class="posts-grid">
+
+  {% for post in posts %}
+
+  <article class="card post-card">
+
+    <div class="post-card-body">
+
+      <div class="post-card-meta">
+
+        <span class="badge badge-{{ post.status }}">{{ post.get_status_display }}</span>
+
+      </div>
+
+      <h3 class="post-card-title">{{ post.title|default:post.content|truncatechars:60 }}</h3>
+
+      <p class="post-card-date">{{ post.created_at|date:"d/m/Y H:i" }}</p>
+
+      <div class="post-card-actions d-flex flex-wrap gap-2 mt-3">
+
+        <a href="{% url 'scheduler:post_edit' post.id %}" class="btn btn-secondary btn-sm">Editar</a>
+
+        <a href="{% url 'scheduler:post_schedule' post.id %}" class="btn btn-ghost btn-sm">Agendar</a>
+
+        <form method="post" action="{% url 'scheduler:post_delete' post.id %}" class="d-inline js-confirm-delete" data-message="Excluir este post permanentemente?">
+
+          {% csrf_token %}
+
+          <button type="submit" class="btn btn-ghost btn-sm text-danger">Excluir</button>
+
+        </form>
+
+      </div>
+
+    </div>
+
+  </article>
+
+  {% endfor %}
+
+</div>
+
+{% else %}
+
+{% include "includes/empty_state.html" with title="Nenhum post criado" description="Comece criando seu primeiro conteúdo para agendar nas redes sociais." action_url="" action_label="" %}
+<div class="text-center mt-3">
+  <a href="{% url 'scheduler:post_create' %}" class="btn btn-primary">Criar primeiro post</a>
+</div>
+
+{% endif %}
+
+{% endblock %}
+

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Agendar post — PostFlow{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Agendar publicação</h1>
+    <p class="page-subtitle">{{ post.title|default:post.content|truncatechars:60 }}</p>
+  </div>
+</div>
+
+<div class="card p-4" style="max-width: 640px;">
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="field mb-3">
+      <label class="label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+      {{ field }}
+      {% if field.errors %}
+      <div class="text-danger small mt-1">{{ field.errors|join:", " }}</div>
+      {% endif %}
+    </div>
+    {% endfor %}
+    <div class="d-flex flex-wrap gap-2">
+      <button type="submit" class="btn btn-primary">Confirmar agendamento</button>
+      <a href="{% url 'scheduler:post_list' %}" class="btn btn-secondary">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

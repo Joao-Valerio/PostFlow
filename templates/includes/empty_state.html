@@ -1,0 +1,11 @@
+<div class="empty-state card">
+  {% if icon %}
+  <div class="empty-state-icon">{{ icon|safe }}</div>
+  {% endif %}
+  <h2 class="empty-state-title">{{ title }}</h2>
+  {% if description %}
+  <p class="empty-state-desc text-muted">{{ description }}</p>
+  {% endif %}
+  {% if action_url and action_label %}
+  <a href="{{ action_url }}" class="btn btn-primary">{{ action_label }}</a>
+  {% endif %}</div>

@@ -1,0 +1,35 @@
+{% extends "accounts/auth_base.html" %}
+
+{% block title %}Cadastro — PostFlow{% endblock %}
+
+{% block auth_card %}
+<h1 class="page-title mb-2">Criar conta</h1>
+<p class="text-muted mb-4">Comece a agendar posts para suas redes sociais</p>
+
+{% if form.non_field_errors %}
+<div class="alert alert-danger mb-3" role="alert">
+  {{ form.non_field_errors|join:", " }}
+</div>
+{% endif %}
+
+<form method="post" novalidate>
+  {% csrf_token %}
+  {% for field in form %}
+  <div class="field mb-3">
+    <label class="label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+    {{ field }}
+    {% if field.help_text %}
+    <div class="text-muted small mt-1">{{ field.help_text }}</div>
+    {% endif %}
+    {% if field.errors %}
+    <div class="text-danger small mt-1">{{ field.errors|join:", " }}</div>
+    {% endif %}
+  </div>
+  {% endfor %}
+  <button type="submit" class="btn btn-primary w-100">Criar conta</button>
+</form>
+{% endblock %}
+
+{% block auth_footer %}
+Já tem conta? <a href="{% url 'accounts:login' %}" class="text-accent">Entrar</a>
+{% endblock %}

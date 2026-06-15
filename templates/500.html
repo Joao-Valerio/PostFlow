@@ -1,0 +1,10 @@
+{% extends "error_base.html" %}
+
+{% block title %}Erro interno — PostFlow{% endblock %}
+
+{% block content %}
+{% include "includes/empty_state.html" with title="500 — Erro interno" description="Algo deu errado no servidor. Tente novamente em instantes." %}
+<div class="text-center mt-3">
+  <a href="{% url 'landing' %}" class="btn btn-primary">Página inicial</a>
+</div>
+{% endblock %}

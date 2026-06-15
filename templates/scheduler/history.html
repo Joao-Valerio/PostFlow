@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+
+
+{% block title %}Histórico — PostFlow{% endblock %}
+
+
+
+{% block content %}
+
+<div class="page-header">
+
+  <div>
+
+    <h1 class="page-title">Histórico</h1>
+
+    <p class="page-subtitle">Publicações agendadas e realizadas</p>
+
+  </div>
+
+</div>
+
+
+
+<div class="filter-chips mb-4">
+
+  <a href="{% url 'scheduler:history' %}" class="filter-chip {% if not status_filter %}active{% endif %}">Todos</a>
+
+  {% for value, label in status_choices %}
+
+  <a href="?status={{ value }}" class="filter-chip {% if status_filter == value %}active{% endif %}">{{ label }}</a>
+
+  {% endfor %}
+
+</div>
+
+
+
+{% if schedules %}
+
+<div class="card">
+
+  <div class="table-responsive">
+
+    <table class="table table-dark table-hover mb-0">
+
+      <thead>
+
+        <tr>
+
+          <th>Post</th>
+
+          <th>Plataforma</th>
+
+          <th>Agendado para</th>
+
+          <th>Status</th>
+
+          <th class="text-end">Ações</th>
+
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        {% for schedule in schedules %}
+
+        <tr>
+
+          <td>{{ schedule.post.title|default:schedule.post.content|truncatechars:40 }}</td>
+
+          <td>{{ schedule.social_account.get_platform_display }}</td>
+
+          <td>{{ schedule.scheduled_at|date:"d/m/Y H:i" }}</td>
+
+          <td><span class="badge badge-{{ schedule.status }}">{{ schedule.get_status_display }}</span></td>
+
+          <td class="text-end">
+
+            {% if schedule.status == 'pending' %}
+
+            <form method="post" action="{% url 'scheduler:schedule_cancel' schedule.id %}" class="d-inline js-confirm-delete" data-message="Cancelar este agendamento?">
+
+              {% csrf_token %}
+
+              <button type="submit" class="btn btn-ghost btn-sm text-danger">Cancelar</button>
+
+            </form>
+
+            {% else %}
+
+            <span class="text-muted small">—</span>
+
+            {% endif %}
+
+          </td>
+
+        </tr>
+
+        {% endfor %}
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+</div>
+
+{% include "includes/pagination.html" with page_obj=page_obj query=query %}
+
+{% else %}
+
+{% include "includes/empty_state.html" with title="Nenhum agendamento" description="Quando você agendar publicações, elas aparecerão aqui com status e histórico." action_url="" action_label="" %}
+<div class="text-center mt-3">
+  <a href="{% url 'scheduler:post_create' %}" class="btn btn-primary">Criar post</a>
+</div>
+
+{% endif %}
+
+{% endblock %}
+

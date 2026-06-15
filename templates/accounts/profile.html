@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Configurações — PostFlow{% endblock %}
+
+{% block content %}
+<div class="page-header animate-in">
+  <div>
+    <h1 class="page-title">Configurações</h1>
+    <p class="page-subtitle">Gerencie perfil, preferências e segurança</p>
+  </div>
+</div>
+
+<div class="settings-tabs animate-in animate-in-delay-1">
+  <a href="?tab=profile" class="filter-chip {% if active_tab == 'profile' %}active{% endif %}">Perfil</a>
+  <a href="?tab=security" class="filter-chip {% if active_tab == 'security' %}active{% endif %}">Segurança</a>
+</div>
+
+{% if active_tab == 'profile' %}
+<div class="card p-4 animate-in animate-in-delay-2" style="max-width: 640px;">
+  <h2 class="h6 mb-4">Informações pessoais</h2>
+  <form method="post" novalidate>
+    {% csrf_token %}
+    <input type="hidden" name="action" value="profile">
+    {% for field in profile_form %}
+    <div class="field mb-3">
+      <label class="label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+      {{ field }}
+      {% if field.errors %}
+      <div class="text-danger small mt-1">{{ field.errors|join:", " }}</div>
+      {% endif %}
+    </div>
+    {% endfor %}
+    <dl class="row mb-4 pt-2 border-top" style="border-color: var(--border) !important;">
+      <dt class="col-sm-4 text-muted">Usuário</dt>
+      <dd class="col-sm-8">{{ user_obj.username }}</dd>
+      <dt class="col-sm-4 text-muted">Organização</dt>
+      <dd class="col-sm-8">{{ user_obj.organization.name|default:"—" }}</dd>
+      <dt class="col-sm-4 text-muted">Papel</dt>
+      <dd class="col-sm-8">{{ user_obj.get_role_display }}</dd>
+    </dl>
+    <button type="submit" class="btn btn-primary">Salvar perfil</button>
+  </form>
+</div>
+{% else %}
+<div class="card p-4 animate-in animate-in-delay-2" style="max-width: 640px;">
+  <h2 class="h6 mb-4">Alterar senha</h2>
+  <form method="post" novalidate>
+    {% csrf_token %}
+    <input type="hidden" name="action" value="password">
+    {% for field in password_form %}
+    <div class="field mb-3">
+      <label class="label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+      {{ field }}
+      {% if field.errors %}
+      <div class="text-danger small mt-1">{{ field.errors|join:", " }}</div>
+      {% endif %}
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">Atualizar senha</button>
+  </form>
+</div>
+{% endif %}
+{% endblock %}
