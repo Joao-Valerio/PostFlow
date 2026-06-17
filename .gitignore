@@ -24,8 +24,10 @@ staticfiles/
 # Environment
 .env
 .env.local
+*.impeccable.*
 
 # IDE
+.cursor/
 .vscode/
 .idea/
 *.swp

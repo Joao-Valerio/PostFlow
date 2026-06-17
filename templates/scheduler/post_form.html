@@ -1,34 +1,116 @@
-{% extends "base.html" %}
-
-{% block title %}{% if is_edit %}Editar post{% else %}Novo post{% endif %} — PostFlow{% endblock %}
-
-{% block content %}
-<div class="page-header">
-  <div>
-    <h1 class="page-title">{% if is_edit %}Editar post{% else %}Novo post{% endif %}</h1>
-    <p class="page-subtitle">Componha o conteúdo para publicação</p>
-  </div>
-</div>
-
-<div class="card p-4" style="max-width: 720px;">
-  <form method="post" novalidate>
-    {% csrf_token %}
-    {% for field in form %}
-    <div class="field mb-3">
-      <label class="label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-      {{ field }}
-      {% if field.errors %}
-      <div class="text-danger small mt-1">{{ field.errors|join:", " }}</div>
-      {% endif %}
-    </div>
-    {% endfor %}
-    <div class="d-flex flex-wrap gap-2">
-      <button type="submit" class="btn btn-primary">{% if is_edit %}Salvar alterações{% else %}Salvar rascunho{% endif %}</button>
-      {% if is_edit %}
-      <a href="{% url 'scheduler:post_schedule' post.id %}" class="btn btn-secondary">Agendar</a>
-      {% endif %}
-      <a href="{% url 'scheduler:post_list' %}" class="btn btn-ghost">Cancelar</a>
-    </div>
-  </form>
-</div>
-{% endblock %}
+{% load static %}
+{% extends "base.html" %}
+
+{% block title %}{% if is_edit %}Editar post{% else %}Novo post{% endif %} — PostFlow{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">{% if is_edit %}Editar post{% else %}Novo post{% endif %}</h1>
+    <p class="page-subtitle">Componha conteúdo, valide limites por rede e confira o preview antes de agendar</p>
+  </div>
+</div>
+
+<form method="post" enctype="multipart/form-data" class="composer-grid">
+  <div class="card p-4">
+    {% csrf_token %}
+    <div class="field mb-3">
+      <label class="label" for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
+      {{ form.title }}
+      {% if form.title.errors %}
+      <div class="text-danger small mt-1">{{ form.title.errors|join:", " }}</div>
+      {% endif %}
+    </div>
+
+    <div class="field mb-3">
+      <label class="label" for="{{ form.content.id_for_label }}">{{ form.content.label }}</label>
+      {{ form.content }}
+      {% if form.content.errors %}
+      <div class="text-danger small mt-1">{{ form.content.errors|join:", " }}</div>
+      {% endif %}
+      <p class="text-muted small mt-2 mb-0">
+        Caracteres: <span class="mono tabular" data-current-count>0</span>
+      </p>
+    </div>
+
+    <div class="field mb-4">
+      <span class="label d-block mb-2">{{ form.target_platforms.label }}</span>
+      <div class="platform-chip-group">
+        {% for value, label in form.target_platforms.field.choices %}
+        <label
+          class="platform-chip platform-chip-input {% if value == 'facebook' %}fb{% elif value == 'instagram' %}ig{% elif value == 'tiktok' %}tiktok{% else %}linkedin{% endif %}"
+          data-platform-chip
+        >
+          <input
+            type="checkbox"
+            name="target_platforms"
+            value="{{ value }}"
+            {% if form.target_platforms.value %}
+              {% if value in form.target_platforms.value %}checked{% endif %}
+            {% else %}
+              checked
+            {% endif %}
+            data-platform-option
+          >
+          <span>{{ label }}</span>
+          <small class="mono tabular" data-limit="{{ value }}">0/0</small>
+        </label>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="field mb-4">
+      <label class="label" for="{{ form.media_files.id_for_label }}">{{ form.media_files.label }}</label>
+      {{ form.media_files }}
+      <p class="text-muted small mt-2 mb-0">Aceita imagens e vídeos. Novos arquivos serão adicionados ao post.</p>
+      {% if form.media_files.errors %}
+      <div class="text-danger small mt-1">{{ form.media_files.errors|join:", " }}</div>
+      {% endif %}
+    </div>
+
+    {% if is_edit and post.media %}
+    <div class="field mb-4">
+      <span class="label d-block mb-2">Mídias já anexadas</span>
+      <div class="composer-media-list">
+        {% for item in post.media %}
+        <label class="composer-media-item">
+          <input type="checkbox" name="remove_media_urls" value="{{ item.url }}">
+          <a href="{{ item.url }}" target="_blank" rel="noopener noreferrer">{{ item.name|default:item.url }}</a>
+          <span class="text-muted small">Marque para remover</span>
+        </label>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="d-flex flex-wrap gap-2">
+      <button type="submit" class="btn btn-primary">{% if is_edit %}Salvar alterações{% else %}Salvar rascunho{% endif %}</button>
+      {% if is_edit %}
+      <a href="{% url 'scheduler:post_schedule' post.id %}" class="btn btn-secondary">Agendar</a>
+      {% endif %}
+      <a href="{% url 'scheduler:post_list' %}" class="btn btn-ghost">Cancelar</a>
+    </div>
+  </div>
+
+  <aside class="card p-4 composer-preview">
+    <h2 class="h6 mb-3">Preview rápido</h2>
+    <p class="text-muted small mb-3">Visual aproximado do texto em cada plataforma selecionada.</p>
+    <div class="composer-preview-card">
+      <p class="composer-preview-title" data-preview-title>Sem título</p>
+      <p class="composer-preview-body" data-preview-content>O conteúdo aparece aqui conforme você digita.</p>
+    </div>
+  </aside>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  window.POSTFLOW_PLATFORM_LIMITS = {
+    facebook: 63206,
+    instagram: 2200,
+    linkedin: 3000,
+    tiktok: 2200
+  };
+</script>
+<script src="{% static 'js/composer.js' %}"></script>
+{% endblock %}
