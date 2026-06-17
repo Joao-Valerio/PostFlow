@@ -4,6 +4,7 @@ import logging
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
+from django.core.files.storage import default_storage
 from django.db.models import Count
 from django.db.models.functions import TruncMonth
 from django.http import JsonResponse
@@ -15,6 +16,35 @@ from django.utils.dateparse import parse_datetime
 from .models import Post, ScheduledPost
 
 logger = logging.getLogger(__name__)
+
+
+def _store_uploaded_media(files):
+    media_items = []
+    for uploaded in files:
+        if not uploaded:
+            continue
+        saved_path = default_storage.save(
+            f"post_media/{uploaded.name}",
+            uploaded,
+        )
+        media_items.append(
+            {
+                "name": uploaded.name,
+                "url": default_storage.url(saved_path),
+                "size": uploaded.size,
+                "content_type": uploaded.content_type or "",
+            }
+        )
+    return media_items
+
+
+def _save_post_media(post, form, files):
+    uploaded_media = _store_uploaded_media(files)
+    existing_media = list(post.media or [])
+    remove_urls = set(form.data.getlist("remove_media_urls"))
+    kept_media = [item for item in existing_media if item.get("url") not in remove_urls]
+    post.media = kept_media + uploaded_media
+    post.save(update_fields=["media", "updated_at"])
 
 
 def landing(request):
@@ -82,12 +112,13 @@ def post_create(request):
     from .forms import PostForm
 
     if request.method == "POST":
-        form = PostForm(request.POST)
+        form = PostForm(request.POST, request.FILES)
         if form.is_valid():
             post = form.save(commit=False)
             post.organization = org
             post.author = request.user
             post.save()
+            _save_post_media(post, form, request.FILES.getlist("media_files"))
             messages.success(request, "Post salvo como rascunho.")
             return redirect("scheduler:post_list")
     else:
@@ -104,9 +135,10 @@ def post_edit(request, post_id):
     from .forms import PostForm
 
     if request.method == "POST":
-        form = PostForm(request.POST, instance=post)
+        form = PostForm(request.POST, request.FILES, instance=post)
         if form.is_valid():
             form.save()
+            _save_post_media(post, form, request.FILES.getlist("media_files"))
             messages.success(request, "Post atualizado com sucesso.")
             return redirect("scheduler:post_list")
     else:
