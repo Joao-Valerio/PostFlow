@@ -1,85 +1,185 @@
-{% extends "base.html" %}
-
-{% block title %}Dashboard — PostFlow{% endblock %}
-
-{% block content %}
-<div class="page-header animate-in">
-  <div>
-    <h1 class="page-title">Dashboard</h1>
-    <p class="page-subtitle">Visão geral das suas publicações agendadas</p>
-  </div>
-  <a href="{% url 'scheduler:post_create' %}" class="btn btn-primary">Novo post</a>
-</div>
-
-<div class="stats-grid animate-in animate-in-delay-1">
-  <div class="card stat-card">
-    <p class="stat-label">Total de agendamentos</p>
-    <p class="stat-value tabular">{{ stats.total }}</p>
-  </div>
-  <div class="card stat-card">
-    <p class="stat-label">Agendados</p>
-    <p class="stat-value tabular text-accent">{{ stats.scheduled }}</p>
-  </div>
-  <div class="card stat-card">
-    <p class="stat-label">Publicados</p>
-    <p class="stat-value tabular">{{ stats.published }}</p>
-  </div>
-  <div class="card stat-card">
-    <p class="stat-label">Falhas</p>
-    <p class="stat-value tabular">{{ stats.failed }}</p>
-  </div>
-</div>
-
-<div class="grid-2 animate-in animate-in-delay-2 mb-4">
-  <div class="card p-4">
-    <h2 class="h6 mb-3">Volume de agendamentos</h2>
-    <canvas id="posts-chart" height="200" aria-label="Gráfico de volume de agendamentos"></canvas>
-  </div>
-  <div class="quick-actions">
-    <a href="{% url 'scheduler:post_create' %}" class="quick-action card text-decoration-none">
-      <span>Criar post</span>
-    </a>
-    <a href="{% url 'scheduler:calendar' %}" class="quick-action card text-decoration-none">
-      <span>Ver calendário</span>
-    </a>
-    <a href="{% url 'integrations:account_list' %}" class="quick-action card text-decoration-none">
-      <span>Conectar redes</span>
-    </a>
-  </div>
-</div>
-{% endblock %}
-
-{% block extra_js %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-<script>
-  (function () {
-    const labels = {{ chart_labels|safe }};
-    const data = {{ chart_data|safe }};
-    const canvas = document.getElementById('posts-chart');
-    if (!canvas || !window.Chart) return;
-
-    new Chart(canvas, {
-      type: 'bar',
-      data: {
-        labels: labels.length ? labels : ['Sem dados'],
-        datasets: [{
-          label: 'Agendamentos',
-          data: data.length ? data : [0],
-          backgroundColor: 'oklch(78% 0.14 155 / 0.35)',
-          borderColor: 'oklch(78% 0.14 155)',
-          borderWidth: 1,
-          borderRadius: 8,
-        }],
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { display: false } },
-        scales: {
-          x: { ticks: { color: '#81868F' }, grid: { color: 'rgba(40,46,56,0.5)' } },
-          y: { beginAtZero: true, ticks: { color: '#81868F', precision: 0 }, grid: { color: 'rgba(40,46,56,0.5)' } },
-        },
-      },
-    });
-  })();
-</script>
-{% endblock %}
+{% extends "base.html" %}
+
+{% block title %}Dashboard — PostFlow{% endblock %}
+
+{% block content %}
+<section class="dashboard-hero animate-in">
+  <div class="dashboard-hero-copy">
+    <span class="dashboard-kicker">Central de publicação</span>
+    <h1 class="dashboard-title">Seu fluxo social, sem ruído.</h1>
+    <p class="dashboard-subtitle">
+      Acompanhe volume, status e próximos passos da operação de conteúdo em uma visão direta.
+    </p>
+    <div class="dashboard-hero-actions">
+      <a href="{% url 'scheduler:post_create' %}" class="btn btn-primary">Criar novo post</a>
+      <a href="{% url 'scheduler:calendar' %}" class="btn btn-secondary">Abrir calendário</a>
+    </div>
+  </div>
+  <div class="dashboard-orbit" aria-hidden="true">
+    <div class="dashboard-orbit-ring"></div>
+    <div class="dashboard-orbit-card dashboard-orbit-card-main">
+      <span class="dashboard-orbit-label">Agendados</span>
+      <strong class="tabular">{{ stats.scheduled }}</strong>
+    </div>
+    <div class="dashboard-orbit-card dashboard-orbit-card-small">
+      <span>Falhas</span>
+      <strong class="tabular">{{ stats.failed }}</strong>
+    </div>
+  </div>
+</section>
+
+<section class="dashboard-metrics animate-in animate-in-delay-1" aria-label="Resumo dos agendamentos">
+  <div class="dashboard-metric-card is-total">
+    <span class="dashboard-metric-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>
+    </span>
+    <p class="dashboard-metric-label">Total de agendamentos</p>
+    <p class="dashboard-metric-value tabular">{{ stats.total }}</p>
+    <span class="dashboard-metric-note">histórico completo</span>
+  </div>
+  <div class="dashboard-metric-card is-scheduled">
+    <span class="dashboard-metric-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8"/><path d="M12 8v5l3 2"/></svg>
+    </span>
+    <p class="dashboard-metric-label">Agendados</p>
+    <p class="dashboard-metric-value tabular">{{ stats.scheduled }}</p>
+    <span class="dashboard-metric-note">na fila de publicação</span>
+  </div>
+  <div class="dashboard-metric-card is-published">
+    <span class="dashboard-metric-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m5 13 4 4L19 7"/></svg>
+    </span>
+    <p class="dashboard-metric-label">Publicados</p>
+    <p class="dashboard-metric-value tabular">{{ stats.published }}</p>
+    <span class="dashboard-metric-note">entregues com sucesso</span>
+  </div>
+  <div class="dashboard-metric-card is-failed">
+    <span class="dashboard-metric-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 8v5M12 17h.01"/><path d="M10.3 4.2 2.6 18a2 2 0 0 0 1.7 3h15.4a2 2 0 0 0 1.7-3L13.7 4.2a2 2 0 0 0-3.4 0Z"/></svg>
+    </span>
+    <p class="dashboard-metric-label">Falhas</p>
+    <p class="dashboard-metric-value tabular">{{ stats.failed }}</p>
+    <span class="dashboard-metric-note">precisam de revisão</span>
+  </div>
+</section>
+
+<section class="dashboard-main-grid animate-in animate-in-delay-2">
+  <div class="dashboard-panel dashboard-chart-panel">
+    <div class="dashboard-panel-header">
+      <div>
+        <span class="dashboard-kicker">Últimos 6 meses</span>
+        <h2>Volume de agendamentos</h2>
+      </div>
+      <span class="dashboard-panel-badge">mensal</span>
+    </div>
+    <div class="dashboard-chart-wrap">
+      <canvas id="posts-chart" height="230" aria-label="Gráfico de volume de agendamentos"></canvas>
+    </div>
+  </div>
+
+  <aside class="dashboard-side-stack" aria-label="Atalhos do dashboard">
+    <div class="dashboard-panel dashboard-focus-panel">
+      <span class="dashboard-kicker">Prioridade</span>
+      <h2>Próxima ação recomendada</h2>
+      <p>
+        {% if stats.failed %}
+          Revise os agendamentos com falha antes de criar novas publicações.
+        {% elif stats.scheduled %}
+          Abra o calendário para conferir a distribuição dos próximos posts.
+        {% else %}
+          Crie seu primeiro post agendado e comece a montar o calendário editorial.
+        {% endif %}
+      </p>
+      <a href="{% if stats.failed %}{% url 'scheduler:history' %}{% elif stats.scheduled %}{% url 'scheduler:calendar' %}{% else %}{% url 'scheduler:post_create' %}{% endif %}" class="dashboard-focus-link">
+        Continuar
+        <span aria-hidden="true">→</span>
+      </a>
+    </div>
+
+    <div class="dashboard-action-grid">
+      <a href="{% url 'scheduler:post_create' %}" class="dashboard-action-card text-decoration-none">
+        <span class="dashboard-action-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
+        </span>
+        <strong>Criar post</strong>
+        <small>Compor e agendar</small>
+      </a>
+      <a href="{% url 'scheduler:calendar' %}" class="dashboard-action-card text-decoration-none">
+        <span class="dashboard-action-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>
+        </span>
+        <strong>Calendário</strong>
+        <small>Organizar datas</small>
+      </a>
+      <a href="{% url 'integrations:account_list' %}" class="dashboard-action-card text-decoration-none">
+        <span class="dashboard-action-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 12h8M12 8v8"/><circle cx="12" cy="12" r="9"/></svg>
+        </span>
+        <strong>Redes</strong>
+        <small>Conectar contas</small>
+      </a>
+    </div>
+  </aside>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+  (function () {
+    const labels = {{ chart_labels|safe }};
+    const data = {{ chart_data|safe }};
+    const canvas = document.getElementById('posts-chart');
+    if (!canvas || !window.Chart) return;
+
+    const gradient = canvas.getContext('2d').createLinearGradient(0, 0, 0, 260);
+    gradient.addColorStop(0, 'oklch(72% 0.08 160 / 0.82)');
+    gradient.addColorStop(1, 'oklch(72% 0.08 160 / 0.16)');
+
+    new Chart(canvas, {
+      type: 'bar',
+      data: {
+        labels: labels.length ? labels : ['Sem dados'],
+        datasets: [{
+          label: 'Agendamentos',
+          data: data.length ? data : [0],
+          backgroundColor: gradient,
+          borderColor: 'oklch(72% 0.08 160)',
+          borderWidth: 1.5,
+          borderRadius: 14,
+          borderSkipped: false,
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: 'oklch(20% 0.02 265)',
+            titleColor: '#fff',
+            bodyColor: '#fff',
+            borderColor: 'oklch(30% 0.02 260)',
+            borderWidth: 1,
+            padding: 12,
+            displayColors: false,
+          },
+        },
+        scales: {
+          x: {
+            ticks: { color: '#9ca3af', font: { size: 12, weight: 600 } },
+            grid: { display: false },
+            border: { display: false },
+          },
+          y: {
+            beginAtZero: true,
+            ticks: { color: '#81868F', precision: 0, padding: 10 },
+            grid: { color: 'rgba(148, 163, 184, 0.08)' },
+            border: { display: false },
+          },
+        },
+      },
+    });
+  })();
+</script>
+{% endblock %}
