@@ -660,6 +660,341 @@ h1, h2, h3, h4 {
 .cal-event.tiktok { border-color: var(--tiktok); }
 .cal-event.linkedin { border-color: var(--linkedin); }
 
+/* ── FullCalendar (PostFlow) ── */
+.postflow-calendar-card {
+  padding: 20px 22px 24px;
+  overflow: hidden;
+}
+
+.postflow-calendar {
+  --fc-border-color: oklch(30% 0.02 260 / 0.55);
+  --fc-page-bg-color: transparent;
+  --fc-neutral-bg-color: var(--bg-elevated);
+  --fc-neutral-text-color: var(--muted);
+  --fc-list-event-hover-bg-color: var(--surface-hover);
+  --fc-today-bg-color: oklch(72% 0.08 160 / 0.06);
+  --fc-now-indicator-color: var(--accent);
+  --fc-event-border-color: transparent;
+  font-family: var(--font-body);
+}
+
+.postflow-calendar .fc-toolbar {
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px !important;
+}
+
+.postflow-calendar .fc-toolbar-title {
+  font-family: var(--font-display);
+  font-size: 1.2rem !important;
+  font-weight: 700;
+  color: var(--fg);
+  letter-spacing: -0.02em;
+}
+
+.postflow-calendar .fc-button {
+  font-family: var(--font-display) !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  padding: 8px 14px !important;
+  line-height: 1.2 !important;
+  border-radius: var(--radius-sm) !important;
+  border: 1px solid var(--border) !important;
+  background: var(--bg-elevated) !important;
+  color: var(--muted) !important;
+  box-shadow: none !important;
+  text-transform: capitalize;
+  transition: background 0.2s var(--ease), color 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+
+.postflow-calendar .fc-button:hover:not(:disabled) {
+  background: var(--surface-hover) !important;
+  color: var(--fg) !important;
+  border-color: oklch(38% 0.02 260) !important;
+}
+
+.postflow-calendar .fc-button:focus {
+  box-shadow: none !important;
+}
+
+.postflow-calendar .fc-button-primary:not(:disabled).fc-button-active,
+.postflow-calendar .fc-button-primary:not(:disabled):active {
+  background: var(--accent) !important;
+  color: oklch(18% 0.04 155) !important;
+  border-color: var(--accent) !important;
+}
+
+.postflow-calendar .fc-button-group > .fc-button {
+  border-radius: 0 !important;
+  margin-left: -1px;
+}
+
+.postflow-calendar .fc-button-group > .fc-button:first-child {
+  border-radius: var(--radius-sm) 0 0 var(--radius-sm) !important;
+  margin-left: 0;
+}
+
+.postflow-calendar .fc-button-group > .fc-button:last-child {
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0 !important;
+}
+
+.postflow-calendar .fc-scrollgrid {
+  border: none !important;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.postflow-calendar .fc-scrollgrid,
+.postflow-calendar .fc-scrollgrid table {
+  border-collapse: collapse !important;
+}
+
+.postflow-calendar .fc-col-header-cell {
+  background: var(--bg-elevated);
+  border-color: var(--fc-border-color) !important;
+  padding: 10px 0;
+}
+
+.postflow-calendar .fc-col-header-cell-cushion {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  text-decoration: none !important;
+}
+
+.postflow-calendar .fc-daygrid-day {
+  background: var(--surface);
+}
+
+.postflow-calendar .fc-daygrid-day-frame {
+  min-height: 96px;
+  padding: 2px;
+}
+
+.postflow-calendar .fc-daygrid-day-top {
+  padding: 4px 6px;
+  flex-direction: row;
+}
+
+.postflow-calendar .fc-daygrid-day-number {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  text-decoration: none !important;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+}
+
+.postflow-calendar .fc-day-today .fc-daygrid-day-number {
+  background: var(--accent);
+  color: oklch(18% 0.04 155);
+}
+
+.postflow-calendar .fc-day-other .fc-daygrid-day-number {
+  opacity: 0.35;
+}
+
+.postflow-calendar .fc-event {
+  border: none !important;
+  border-radius: 8px !important;
+  padding: 2px 7px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--font-display);
+  box-shadow: none;
+  margin: 1px 4px 3px !important;
+}
+
+.postflow-calendar .fc-event .fc-event-title,
+.postflow-calendar .fc-event .fc-event-time {
+  color: #fff !important;
+  font-weight: 600;
+}
+
+.postflow-calendar .fc-daygrid-event-dot {
+  display: none;
+}
+
+.postflow-calendar .fc-daygrid-more-link {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  border-radius: 6px;
+  padding: 2px 8px;
+  margin: 2px 4px;
+  background: var(--accent-dim);
+}
+
+.postflow-calendar .fc-timegrid-slot {
+  height: 2.75em;
+}
+
+.postflow-calendar .fc-timegrid-slot-label-cushion {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  font-family: var(--font-mono);
+}
+
+.postflow-calendar .fc-timegrid-col,
+.postflow-calendar .fc-timegrid-body {
+  background: var(--surface);
+}
+
+.postflow-calendar .fc-timegrid-axis {
+  background: var(--bg-elevated);
+}
+
+.postflow-calendar .fc-timegrid-event {
+  border: none !important;
+  border-radius: 8px !important;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.postflow-calendar .fc-timegrid-event .fc-event-main {
+  padding: 4px 8px;
+  color: #fff;
+}
+
+.postflow-calendar .fc-timegrid-now-indicator-line {
+  border-color: var(--accent);
+  border-width: 2px;
+}
+
+.postflow-calendar .fc-timegrid-now-indicator-arrow {
+  border-color: var(--accent);
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+}
+
+.postflow-calendar .fc-list {
+  border: none !important;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.postflow-calendar .fc-list-table {
+  border: none !important;
+}
+
+.postflow-calendar .fc-list-day-cushion {
+  background: var(--bg-elevated) !important;
+  padding: 12px 16px !important;
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--fg);
+}
+
+.postflow-calendar .fc-list-day th,
+.postflow-calendar .fc-list-day td {
+  border-color: var(--fc-border-color) !important;
+}
+
+.postflow-calendar .fc-list-event {
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.postflow-calendar .fc-list-event td {
+  background: var(--surface) !important;
+  border-color: var(--fc-border-color) !important;
+  padding: 10px 16px !important;
+  vertical-align: middle !important;
+}
+
+.postflow-calendar .fc-list-event:hover td {
+  background: var(--surface-hover) !important;
+}
+
+.postflow-calendar .fc-list-event-graphic {
+  padding-left: 16px !important;
+  width: 36px;
+}
+
+.postflow-calendar .fc-list-event-dot {
+  border-radius: 50%;
+  width: 10px;
+  height: 10px;
+  border-width: 0;
+}
+
+.postflow-calendar .fc-list-event-title a {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-family: var(--font-display);
+  font-size: 13px;
+  color: #fff !important;
+  text-decoration: none !important;
+  line-height: 1.3;
+}
+
+.postflow-calendar .fc-list-event.platform-facebook .fc-list-event-title a { background: var(--fb); }
+.postflow-calendar .fc-list-event.platform-instagram .fc-list-event-title a { background: var(--ig); }
+.postflow-calendar .fc-list-event.platform-linkedin .fc-list-event-title a { background: var(--linkedin); }
+.postflow-calendar .fc-list-event.platform-twitter .fc-list-event-title a { background: #1DA1F2; }
+.postflow-calendar .fc-list-event:not([class*="platform-"]) .fc-list-event-title a {
+  background: var(--accent-strong);
+}
+
+.postflow-calendar .fc-list-event-time {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted) !important;
+  white-space: nowrap;
+  width: 72px;
+}
+
+.postflow-calendar .fc-list-empty {
+  background: var(--surface);
+  padding: 48px 24px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.postflow-calendar .fc table {
+  margin-bottom: 0;
+}
+
+@media (max-width: 768px) {
+  .postflow-calendar-card { padding: 14px 12px 18px; }
+
+  .postflow-calendar .fc-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .postflow-calendar .fc-toolbar-chunk {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .postflow-calendar .fc-daygrid-day-frame {
+    min-height: 72px;
+  }
+
+  .postflow-calendar .fc-list-event-time {
+    width: auto;
+    display: block;
+    margin-bottom: 4px;
+  }
+}
+
 /* ── Animations ── */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(20px); }

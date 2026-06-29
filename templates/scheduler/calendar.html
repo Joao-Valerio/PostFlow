@@ -1,31 +1,31 @@
-{% extends "base.html" %}
-{% load static %}
-
-{% block title %}Calendário — PostFlow{% endblock %}
-
-{% block extra_css %}
-<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
-{% endblock %}
-
-{% block content %}
-<div class="page-header">
-  <div>
-    <h1 class="page-title">Calendário</h1>
-    <p class="page-subtitle">Visualize e gerencie agendamentos — arraste eventos para reagendar</p>
-  </div>
-  <a href="{% url 'scheduler:post_create' %}" class="btn btn-primary">Novo post</a>
-</div>
-<div class="card p-3">
-  <div id="calendar"></div>
-</div>
-{% endblock %}
-
-{% block extra_js %}
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/locales/pt-br.global.min.js"></script>
-<script>
-  window.POSTFLOW_CALENDAR_EVENTS_URL = "{% url 'scheduler:calendar_events' %}";
-  window.POSTFLOW_CALENDAR_RESCHEDULE_URL = "{% url 'scheduler:calendar_reschedule' '00000000-0000-0000-0000-000000000000' %}".replace('00000000-0000-0000-0000-000000000000', '');
-</script>
-<script src="{% static 'js/calendar.js' %}"></script>
-{% endblock %}
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Calendário — PostFlow{% endblock %}
+
+{% block extra_css %}
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Calendário</h1>
+    <p class="page-subtitle">Visualize e gerencie agendamentos — arraste eventos para reagendar</p>
+  </div>
+  <a href="{% url 'scheduler:post_create' %}" class="btn btn-primary">Novo post</a>
+</div>
+<div class="card postflow-calendar-card">
+  <div id="calendar" class="postflow-calendar"></div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/locales/pt-br.global.min.js"></script>
+<script>
+  window.POSTFLOW_CALENDAR_EVENTS_URL = "{% url 'scheduler:calendar_events' %}";
+  window.POSTFLOW_CALENDAR_RESCHEDULE_URL = "{% url 'scheduler:calendar_reschedule' '00000000-0000-0000-0000-000000000000' %}".replace('00000000-0000-0000-0000-000000000000', '');
+</script>
+<script src="{% static 'js/calendar.js' %}"></script>
+{% endblock %}
